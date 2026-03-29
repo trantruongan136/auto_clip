@@ -1,6 +1,6 @@
 /**
- * 统一状态栏组件 - 替换旧的复杂进度系统
- * 支持下载中、处理中、完成等状态的统一显示
+ * Unified status bar component - Replacing the old complex progression system
+ * Supports unified display of downloading, processing, completed and other statuses
  */
 
 import React, { useEffect, useState } from 'react'
@@ -37,68 +37,68 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
   
   const progress = getProgress(projectId)
 
-  // 根据状态决定是否轮询
+  // Determine whether to poll based on status
   useEffect(() => {
     if ((status === 'processing' || status === 'pending') && !isPolling) {
-      console.log(`开始轮询处理进度: ${projectId}`)
+      console.log(`Start polling for processing progress: ${projectId}`)
       startPolling([projectId], 2000)
       setIsPolling(true)
     } else if (status !== 'processing' && status !== 'pending' && isPolling) {
-      console.log(`停止轮询处理进度: ${projectId}`)
+      console.log(`Stop polling for processing progress: ${projectId}`)
       stopPolling()
       setIsPolling(false)
     }
 
     return () => {
       if (isPolling) {
-        console.log(`清理轮询: ${projectId}`)
+        console.log(`Cleanup polling: ${projectId}`)
         stopPolling()
         setIsPolling(false)
       }
     }
   }, [status, projectId, isPolling, startPolling, stopPolling])
 
-  // 下载进度轮询
+  // Download progress polling
   useEffect(() => {
     if (status === 'downloading') {
       const pollDownloadProgress = async () => {
         try {
-          console.log(`轮询下载进度: ${projectId}`)
+          console.log(`Polling for download progress: ${projectId}`)
           const response = await fetch(`http://localhost:8000/api/v1/projects/${projectId}`)
           if (response.ok) {
             const projectData = await response.json()
-            console.log('项目数据:', projectData)
+            console.log('project data:', projectData)
             const newProgress = projectData.processing_config?.download_progress || 0
-            console.log(`下载进度更新: ${newProgress}%`)
+            console.log(`Download progress updates: ${newProgress}%`)
             setCurrentDownloadProgress(newProgress)
             onDownloadProgressUpdate?.(newProgress)
             
-            // 如果下载完成，检查是否需要切换到处理状态
+            // If the download is completed, check whether it needs to switch to processing state
             if (newProgress >= 100) {
-              console.log('下载完成，切换到处理状态')
+              console.log('Download completed, switch to processing state')
               setTimeout(() => {
                 onStatusChange?.('processing')
               }, 1000)
             }
           } else {
-            console.error('获取项目数据失败:', response.status, response.statusText)
+            console.error('Failed to obtain project data:', response.status, response.statusText)
           }
         } catch (error) {
-          console.error('获取下载进度失败:', error)
+          console.error('Failed to get download progress:', error)
         }
       }
 
-      // 立即获取一次
+      // Get it now
       pollDownloadProgress()
       
-      // 每2秒轮询一次
+      // Every2Poll once per second
       const interval = setInterval(pollDownloadProgress, 2000)
       
       return () => clearInterval(interval)
     }
   }, [status, projectId, onDownloadProgressUpdate, onStatusChange])
 
-  // 处理状态变化
+  // Handling state changes
   useEffect(() => {
     if (progress && onStatusChange) {
       if (isCompleted(progress.stage)) {
@@ -109,7 +109,7 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
     }
   }, [progress, onStatusChange])
 
-  // 导入中状态
+  // Importing status
   if (status === 'importing') {
     return (
       <div style={{
@@ -133,13 +133,13 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
           fontSize: '8px', 
           lineHeight: '9px'
         }}>
-          导入中
+          Importing
         </div>
       </div>
     )
   }
 
-  // 下载中状态
+  // Downloading status
   if (status === 'downloading') {
     return (
       <div style={{
@@ -163,16 +163,16 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
           fontSize: '8px', 
           lineHeight: '9px'
         }}>
-          下载中
+          Downloading
         </div>
       </div>
     )
   }
 
-  // 处理中状态 - 使用新的简化进度系统
+  // Processing status - Use the new simplified progression system
   if (status === 'processing') {
     if (!progress) {
-      // 等待进度数据
+      // Waiting for progress data
       return (
       <div style={{
         background: 'rgba(82, 196, 26, 0.1)',
@@ -195,7 +195,7 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
           fontSize: '8px', 
           lineHeight: '9px'
         }}>
-          初始化中...
+          Initializing...
         </div>
       </div>
       )
@@ -225,13 +225,13 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
           fontWeight: 600, 
           lineHeight: '12px'
         }}>
-          {failed ? '✗ 失败' : `${percent}%`}
+          {failed ? '✗ Failed' : `${percent}%`}
         </div>
         <div style={{ 
           color: '#999999', 
           fontSize: '8px', 
           lineHeight: '9px',
-          minHeight: '9px' // 确保失败状态也有固定高度
+          minHeight: '9px' // Make sure the failed state also has a fixed height
         }}>
           {failed ? '' : stageDisplayName}
         </div>
@@ -239,7 +239,7 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
     )
   }
 
-  // 已完成状态
+  // Completed status
   if (status === 'completed') {
     return (
       <div style={{
@@ -263,13 +263,13 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
           fontSize: '8px', 
           lineHeight: '9px'
         }}>
-          已完成
+          Completed
         </div>
       </div>
     )
   }
 
-  // 失败状态
+  // failure status
   if (status === 'failed') {
     return (
       <div style={{
@@ -286,21 +286,21 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
           fontWeight: 600, 
           lineHeight: '12px'
         }}>
-          ✗ 失败
+          ✗ Failed
         </div>
         <div style={{ 
           color: '#999999', 
           fontSize: '8px', 
           lineHeight: '9px',
-          minHeight: '9px' // 确保失败状态也有固定高度
+          minHeight: '9px' // Make sure the failed state also has a fixed height
         }}>
-          处理失败
+          Processing failed
         </div>
       </div>
     )
   }
 
-  // 等待状态
+  // waiting state
   return (
     <div style={{
       background: 'rgba(217, 217, 217, 0.1)',
@@ -316,21 +316,21 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
         fontWeight: 600, 
         lineHeight: '12px'
       }}>
-        ○ 等待中
+        ○ Pending
       </div>
       <div style={{ 
         color: '#999999', 
         fontSize: '8px', 
         lineHeight: '9px',
-        minHeight: '9px' // 确保等待状态也有固定高度
+        minHeight: '9px' // Make sure the wait state also has a fixed height
       }}>
-        等待处理
+        Waiting for processing
       </div>
     </div>
   )
 }
 
-// 简化的进度条组件 - 用于详细进度显示
+// Simplified progress bar component - Used for detailed progress display
 interface SimpleProgressDisplayProps {
   projectId: string
   status: string
