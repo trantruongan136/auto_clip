@@ -140,12 +140,12 @@ class DashScopeProvider(LLMProvider):
             raise
     
     def test_connection(self) -> bool:
-        """测试DashScope连接"""
+        """Test DashScope connection"""
         try:
-            response = self.call("请回复'测试成功'")
-            return "测试成功" in response.content or "success" in response.content.lower()
+            response = self.call("Reply with exactly: ok")
+            return len(response.content.strip()) > 0
         except Exception as e:
-            logger.error(f"DashScope连接测试失败: {e}")
+            logger.error(f"DashScope connection test failed: {e}")
             return False
     
     def get_available_models(self) -> List[ModelInfo]:
@@ -215,12 +215,12 @@ class OpenAIProvider(LLMProvider):
             raise
     
     def test_connection(self) -> bool:
-        """测试OpenAI连接"""
+        """Test OpenAI connection"""
         try:
-            response = self.call("请回复'测试成功'")
-            return "测试成功" in response.content or "success" in response.content.lower()
+            response = self.call("Reply with exactly: ok")
+            return len(response.content.strip()) > 0
         except Exception as e:
-            logger.error(f"OpenAI连接测试失败: {e}")
+            logger.error(f"OpenAI connection test failed: {e}")
             return False
     
     def get_available_models(self) -> List[ModelInfo]:
@@ -246,7 +246,21 @@ class OpenAIProvider(LLMProvider):
                 provider=ProviderType.OPENAI,
                 max_tokens=128000,
                 description="OpenAI GPT-4 Turbo模型"
-            )
+            ),
+            ModelInfo(
+                name="gpt-4o",
+                display_name="GPT-4o",
+                provider=ProviderType.OPENAI,
+                max_tokens=128000,
+                description="OpenAI GPT-4o模型，速度更快，成本更低"
+            ),
+            ModelInfo(
+                name="gpt-4o-mini",
+                display_name="GPT-4o Mini",
+                provider=ProviderType.OPENAI,
+                max_tokens=128000,
+                description="OpenAI GPT-4o Mini模型，最快最便宜，推荐使用"
+            ),
         ]
 
 class GeminiProvider(LLMProvider):
@@ -279,12 +293,12 @@ class GeminiProvider(LLMProvider):
             raise
     
     def test_connection(self) -> bool:
-        """测试Gemini连接"""
+        """Test Gemini connection"""
         try:
-            response = self.call("请回复'测试成功'")
-            return "测试成功" in response.content or "success" in response.content.lower()
+            response = self.call("Reply with exactly: ok")
+            return len(response.content.strip()) > 0
         except Exception as e:
-            logger.error(f"Gemini连接测试失败: {e}")
+            logger.error(f"Gemini connection test failed: {e}")
             return False
     
     def get_available_models(self) -> List[ModelInfo]:
@@ -364,12 +378,12 @@ class SiliconFlowProvider(LLMProvider):
             raise
     
     def test_connection(self) -> bool:
-        """测试硅基流动连接"""
+        """Test SiliconFlow connection"""
         try:
-            response = self.call("请回复'测试成功'")
-            return "测试成功" in response.content or "success" in response.content.lower()
+            response = self.call("Reply with exactly: ok")
+            return len(response.content.strip()) > 0
         except Exception as e:
-            logger.error(f"硅基流动连接测试失败: {e}")
+            logger.error(f"SiliconFlow connection test failed: {e}")
             return False
     
     def get_available_models(self) -> List[ModelInfo]:

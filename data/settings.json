@@ -1,6 +1,10 @@
 {
+  "llm_provider": "gemini",
   "dashscope_api_key": "sk-1280fee632a541c1a69d3873f850358b",
-  "model_name": "qwen-plus",
+  "openai_api_key": "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",
+  "gemini_api_key": "AIzaSyD5DRM6npNoa18Z2usLeV7O2WNWN9eN_2Y",
+  "siliconflow_api_key": "",
+  "model_name": "gemini-2.5-flash",
   "chunk_size": 5000,
   "min_score_threshold": 0.7,
   "max_clips_per_collection": 5

@@ -21,7 +21,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
   onGenerateVideo,
   onUpdate
 }) => {
-  // 按照collection.clip_ids的顺序排列clips
+  // according tocollection.clip_idsin orderclips
   const collectionClips = collection.clip_ids.map(clipId => clips.find(clip => clip.id === clipId)).filter(Boolean) as Clip[]
   
   const totalDuration = collectionClips.reduce((total, clip) => {
@@ -92,7 +92,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
             <PlayCircleOutlined style={{ fontSize: '40px', color: 'white' }} />
           </div>
           
-          {/* 右上角合集类型标签 */}
+          {/* Collection type label in the upper right corner */}
           <div 
             style={{
               position: 'absolute',
@@ -111,10 +111,10 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
               gap: '4px'
             }}
           >
-            {collection.collection_type === 'ai_recommended' ? 'AI推荐' : '手动创建'}
+            {collection.collection_type === 'ai_recommended' ? 'AIrecommend' : 'Create manually'}
           </div>
           
-          {/* 左下角片段数量 */}
+          {/* Number of fragments in the lower left corner */}
           <div 
             style={{
               position: 'absolute',
@@ -131,10 +131,10 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
               gap: '4px'
             }}
           >
-            {collectionClips.length} 个片段
+            {collectionClips.length} fragments
           </div>
           
-          {/* 右下角总时长 */}
+          {/* Total duration in lower right corner */}
           <div 
             style={{
               position: 'absolute',
@@ -163,14 +163,14 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
         flexDirection: 'column',
         justifyContent: 'space-between'
       }}>
-        {/* 内容区域 - 固定高度 */}
+        {/* content area - fixed height */}
         <div style={{ 
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
-          minHeight: 0 // 允许flex子项收缩
+          minHeight: 0 // allowflexChildren shrink
         }}>
-          {/* 标题区域 - 固定高度 */}
+          {/* title area - fixed height */}
           <div style={{ 
             height: '44px',
             marginBottom: '8px',
@@ -181,7 +181,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
               title={collection.collection_title}
               collectionId={collection.id}
               onTitleUpdate={(newTitle) => {
-                // 更新合集标题
+                // Update collection title
                 if (onUpdate) {
                   onUpdate(collection.id, { collection_title: newTitle })
                 }
@@ -201,7 +201,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
             />
           </div>
           
-          {/* 合集描述 - 固定高度 */}
+          {/* Collection description - fixed height */}
           <div style={{ 
             height: '58px',
             marginBottom: '12px',
@@ -209,7 +209,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
             alignItems: 'flex-start'
           }}>
             <Tooltip 
-              title={collection.collection_summary || '暂无描述'} 
+              title={collection.collection_summary || 'No description yet'} 
               placement="top" 
               overlayStyle={{ maxWidth: '300px' }}
               mouseEnterDelay={0.5}
@@ -229,13 +229,13 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
                   width: '100%'
                 }}
               >
-                {collection.collection_summary || '暂无描述'}
+                {collection.collection_summary || 'No description yet'}
               </div>
             </Tooltip>
           </div>
         </div>
         
-        {/* 操作按钮 - 固定在底部 */}
+        {/* Action button - fixed at bottom */}
         <div style={{ 
           display: 'flex', 
           gap: '8px',
@@ -258,7 +258,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
               background: 'rgba(79, 172, 254, 0.1)'
             }}
           >
-            播放
+            play
           </Button>
           {onGenerateVideo && (
             <Button 
@@ -276,14 +276,14 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
                 background: 'rgba(82, 196, 26, 0.1)'
               }}
             >
-              下载
+              download
             </Button>
           )}
           <Button 
             type="text" 
             size="small"
             icon={<EditOutlined />}
-            onClick={() => message.info('开发中，敬请期待', 3)}
+            onClick={() => message.info('Under development, please stay tuned', 3)}
             style={{
               color: '#ff7875',
               border: '1px solid rgba(255, 120, 117, 0.3)',
@@ -294,7 +294,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
               background: 'rgba(255, 120, 117, 0.1)'
             }}
           >
-            投稿
+            Contribute
           </Button>
         </div>
       </div>

@@ -9,7 +9,7 @@ import Header from './components/Header'
 const { Content } = Layout
 
 function App() {
-  console.log('🎬 App组件已加载');
+  console.log('🎬 AppComponent loaded');
   
   return (
     <Layout>

@@ -541,14 +541,19 @@ class SpeechRecognizer:
             # 添加超时处理
             logger.info(f"执行Whisper命令: {' '.join(cmd)}")
             
-            # 根据超时配置决定是否设置超时
+            # 准备环境变量解决SSL证书验证问题 (Mac下常见的自动下载模型报错)
+            env = dict(os.environ)
+            env["PYTHONHTTPSVERIFY"] = "0"
+            
+            # 使用环境变量执行Whisper以忽略SSL错误下载模型
             if config.timeout > 0:
                 result = subprocess.run(
                     cmd, 
                     capture_output=True, 
                     text=True, 
                     timeout=config.timeout,
-                    cwd=str(video_path.parent)  # 设置工作目录
+                    cwd=str(video_path.parent),  # 设置工作目录
+                    env=env
                 )
             else:
                 # 无超时限制
@@ -556,7 +561,8 @@ class SpeechRecognizer:
                     cmd, 
                     capture_output=True, 
                     text=True, 
-                    cwd=str(video_path.parent)  # 设置工作目录
+                    cwd=str(video_path.parent),  # 设置工作目录
+                    env=env
                 )
             
             if result.returncode == 0:

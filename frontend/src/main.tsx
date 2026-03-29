@@ -11,12 +11,12 @@ import utc from 'dayjs/plugin/utc'
 import App from './App.tsx'
 import './index.css'
 
-// 配置dayjs插件
+// Configurationdayjsplug-in
 dayjs.extend(relativeTime)
 dayjs.extend(timezone)
 dayjs.extend(utc)
 
-// 设置dayjs中文和时区
+// set updayjsChinese and time zone
 dayjs.locale('zh-cn')
 dayjs.tz.setDefault('Asia/Shanghai')
 

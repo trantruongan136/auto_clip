@@ -25,12 +25,12 @@ const AddClipToCollectionModal: React.FC<AddClipToCollectionModalProps> = ({
   const [selectedClipIds, setSelectedClipIds] = useState<string[]>([])
   const [searchText, setSearchText] = useState('')
 
-  // 过滤出不在当前合集中的切片
+  // Filter out slices that are not in the current collection
   const availableClips = useMemo(() => {
     return clips.filter(clip => !existingClipIds.includes(clip.id))
   }, [clips, existingClipIds])
 
-  // 根据搜索文本过滤切片
+  // Filter slices based on search text
   const filteredClips = useMemo(() => {
     if (!searchText.trim()) {
       return availableClips
@@ -91,14 +91,14 @@ const AddClipToCollectionModal: React.FC<AddClipToCollectionModalProps> = ({
 
   return (
     <Modal
-      title="添加切片到合集"
+      title="Add slices to collection"
       open={visible}
       onCancel={handleCancel}
       width={800}
       className="add-clip-modal"
       footer={[
         <Button key="cancel" onClick={handleCancel}>
-          取消
+          Cancel
         </Button>,
         <Button 
           key="confirm" 
@@ -106,15 +106,15 @@ const AddClipToCollectionModal: React.FC<AddClipToCollectionModalProps> = ({
           onClick={handleConfirm}
           disabled={selectedClipIds.length === 0}
         >
-          添加 {selectedClipIds.length > 0 && `(${selectedClipIds.length})`}
+          Add to {selectedClipIds.length > 0 && `(${selectedClipIds.length})`}
         </Button>
       ]}
     >
       <div className="add-clip-modal-content">
-        {/* 搜索和操作栏 */}
+        {/* Search and action bar */}
         <div className="search-section">
           <Search
-            placeholder="搜索切片标题、内容或推荐理由..."
+            placeholder="Search for slice title, content, or recommendation reasons..."
             prefix={<SearchOutlined />}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
@@ -125,7 +125,7 @@ const AddClipToCollectionModal: React.FC<AddClipToCollectionModalProps> = ({
           <div className="action-bar">
             <Space>
               <Text type="secondary">
-                可添加 {filteredClips.length} 个切片
+                Can be added {filteredClips.length} slices
               </Text>
               {filteredClips.length > 0 && (
                 <Button 
@@ -133,14 +133,14 @@ const AddClipToCollectionModal: React.FC<AddClipToCollectionModalProps> = ({
                   size="small"
                   onClick={handleSelectAll}
                 >
-                  {selectedClipIds.length === filteredClips.length ? '取消全选' : '全选'}
+                  {selectedClipIds.length === filteredClips.length ? 'Deselect all' : 'Select all'}
                 </Button>
               )}
             </Space>
           </div>
         </div>
 
-        {/* 切片列表 */}
+        {/* slice list */}
         <div className="clips-list-container">
           {filteredClips.length > 0 ? (
             <List
@@ -178,7 +178,7 @@ const AddClipToCollectionModal: React.FC<AddClipToCollectionModalProps> = ({
                                 border: 'none'
                               }}
                             >
-                              分数: {(clip.final_score * 100).toFixed(0)}
+                              Fraction: {(clip.final_score * 100).toFixed(0)}
                             </Tag>
                           </Space>
                         </div>
@@ -194,7 +194,7 @@ const AddClipToCollectionModal: React.FC<AddClipToCollectionModalProps> = ({
                         {clip.content && clip.content.length > 0 && (
                           <div className="clip-content">
                             <Text type="secondary" style={{ fontSize: '11px' }}>
-                              {clip.content.slice(0, 2).join('、')}
+                              {clip.content.slice(0, 2).join(',')}
                               {clip.content.length > 2 && '...'}
                             </Text>
                           </div>
@@ -211,8 +211,8 @@ const AddClipToCollectionModal: React.FC<AddClipToCollectionModalProps> = ({
                 image={<PlayCircleOutlined style={{ fontSize: '48px', color: '#d9d9d9' }} />}
                 description={
                   availableClips.length === 0 
-                    ? "所有切片都已在合集中" 
-                    : "没有找到匹配的切片"
+                    ? "All slices are in the collection" 
+                    : "No matching slice found"
                 }
               />
             </div>

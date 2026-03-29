@@ -1,59 +1,59 @@
 #!/bin/bash
 
-# Docker开发环境启动脚本
-# 专门为开发环境设计，解决前端vite问题
+# Docker Development Environment Startup Script
+# Designed specifically for development environment to fix frontend vite issues
 
 set -euo pipefail
 
-echo "🚀 启动AutoClip开发环境..."
+echo "🚀 Starting AutoClip development environment..."
 
-# 设置环境变量
+# Set environment variables
 export PYTHONPATH=/app
 export PYTHONUNBUFFERED=1
 
-# 确保数据目录存在
+# Ensure data directories exist
 mkdir -p /app/data/projects /app/data/uploads /app/data/temp /app/data/output /app/logs
 
-# 激活虚拟环境
+# Activate virtual environment
 source /app/venv/bin/activate
 
-# 检查并安装前端依赖
-echo "📦 检查前端依赖..."
+# Check and install frontend dependencies
+echo "📦 Checking frontend dependencies..."
 cd /app/frontend
 if [ ! -d node_modules ] || [ ! -f node_modules/.bin/vite ]; then
-    echo "安装前端依赖..."
+    echo "Installing frontend dependencies..."
     npm install
 fi
 
-# 检查vite是否正确安装
+# Check if vite is installed correctly
 if [ ! -f node_modules/.bin/vite ]; then
-    echo "❌ vite未正确安装，重新安装..."
+    echo "❌ vite is not properly installed, reinstalling..."
     npm install vite
 fi
 
-# 返回根目录
+# Return to root directory
 cd /app
 
-# 启动后端服务
-echo "🔧 启动后端服务..."
+# Start backend service
+echo "🔧 Starting backend service..."
 python -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload &
 BACKEND_PID=$!
 
-# 等待后端启动
+# Wait for backend to start
 sleep 3
 
-# 启动前端服务
-echo "🌐 启动前端服务..."
+# Start frontend service
+echo "🌐 Starting frontend service..."
 cd /app/frontend
 npx vite --host 0.0.0.0 --port 3000 &
 FRONTEND_PID=$!
 
-# 返回根目录
+# Return to root directory
 cd /app
 
-echo "✅ 服务启动完成"
-echo "  后端API: http://localhost:8000"
-echo "  前端界面: http://localhost:3000"
+echo "✅ Services started successfully"
+echo "  Backend API: http://localhost:8000"
+echo "  Frontend UI: http://localhost:3000"
 
-# 等待所有进程
+# Wait for all processes
 wait

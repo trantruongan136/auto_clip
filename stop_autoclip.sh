@@ -1,25 +1,25 @@
 #!/bin/bash
 
-# AutoClip 系统停止脚本
-# 版本: 2.0
-# 功能: 优雅地停止所有AutoClip服务
+# AutoClip Stop Script
+# Version: 2.0
+# Function: Gracefully stop all AutoClip services
 
 set -euo pipefail
 
 # =============================================================================
-# 配置区域
+# Configuration Area
 # =============================================================================
 
-# PID文件
+# PID Files
 BACKEND_PID_FILE="backend.pid"
 FRONTEND_PID_FILE="frontend.pid"
 CELERY_PID_FILE="celery.pid"
 
-# 日志目录
+# Log Directory
 LOG_DIR="logs"
 
 # =============================================================================
-# 颜色和样式定义
+# Color and Style Definitions
 # =============================================================================
 
 RED='\033[0;31m'
@@ -29,7 +29,7 @@ BLUE='\033[0;34m'
 PURPLE='\033[0;35m'
 NC='\033[0m' # No Color
 
-# 图标定义
+# Icon Definitions
 ICON_SUCCESS="✅"
 ICON_ERROR="❌"
 ICON_WARNING="⚠️"
@@ -38,7 +38,7 @@ ICON_STOP="🛑"
 ICON_CLEAN="🧹"
 
 # =============================================================================
-# 工具函数
+# Utility Functions
 # =============================================================================
 
 log_info() {
@@ -62,7 +62,7 @@ log_header() {
     echo -e "${PURPLE}$(printf '=%.0s' {1..50})${NC}"
 }
 
-# 停止进程
+# Stop process
 stop_process() {
     local pid_file="$1"
     local service_name="$2"
@@ -70,168 +70,168 @@ stop_process() {
     if [[ -f "$pid_file" ]]; then
         local pid=$(cat "$pid_file")
         if kill -0 "$pid" 2>/dev/null; then
-            log_info "停止 $service_name (PID: $pid)..."
+            log_info "Stopping $service_name (PID: $pid)..."
             
-            # 优雅停止
+            # Graceful stop
             kill "$pid" 2>/dev/null || true
             
-            # 等待进程结束
+            # Wait for process to end
             local count=0
             while kill -0 "$pid" 2>/dev/null && [[ $count -lt 10 ]]; do
                 sleep 1
                 ((count++))
             done
             
-            # 如果进程仍在运行，强制停止
+            # If process is still running, force stop
             if kill -0 "$pid" 2>/dev/null; then
-                log_warning "强制停止 $service_name..."
+                log_warning "Force stopping $service_name..."
                 kill -9 "$pid" 2>/dev/null || true
                 sleep 1
             fi
             
             if kill -0 "$pid" 2>/dev/null; then
-                log_error "无法停止 $service_name"
+                log_error "Could not stop $service_name"
             else
-                log_success "$service_name 已停止"
+                log_success "$service_name has been stopped"
             fi
         else
-            log_warning "$service_name 进程不存在"
+            log_warning "$service_name process does not exist"
         fi
         rm -f "$pid_file"
     else
-        log_info "$service_name PID文件不存在"
+        log_info "$service_name PID file does not exist"
     fi
 }
 
-# 停止所有相关进程
+# Stop all related processes
 stop_all_processes() {
-    log_header "停止所有AutoClip服务"
+    log_header "Stopping all AutoClip services"
     
-    # 停止通过PID文件管理的进程
-    stop_process "$BACKEND_PID_FILE" "后端服务"
-    stop_process "$FRONTEND_PID_FILE" "前端服务"
+    # Stop processes managed by PID files
+    stop_process "$BACKEND_PID_FILE" "Backend Service"
+    stop_process "$FRONTEND_PID_FILE" "Frontend Service"
     stop_process "$CELERY_PID_FILE" "Celery Worker"
     
-    # 停止所有相关进程
-    log_info "停止所有Celery Worker进程..."
+    # Stop all related processes
+    log_info "Stopping all Celery Worker processes..."
     pkill -f "celery.*worker" 2>/dev/null || true
     
-    log_info "停止所有后端API进程..."
+    log_info "Stopping all Backend API processes..."
     pkill -f "uvicorn.*backend.main:app" 2>/dev/null || true
     
-    log_info "停止所有前端开发服务器..."
+    log_info "Stopping all Frontend development servers..."
     pkill -f "npm.*dev" 2>/dev/null || true
     pkill -f "vite" 2>/dev/null || true
     
-    # 等待进程完全停止
+    # Wait for processes to completely stop
     sleep 2
     
-    log_success "所有服务已停止"
+    log_success "All services have been stopped"
 }
 
-# 清理临时文件
+# Clean temporary files
 cleanup_temp_files() {
-    log_header "清理临时文件"
+    log_header "Cleaning up temporary files"
     
-    # 清理PID文件
+    # Clean PID files
     rm -f "$BACKEND_PID_FILE" "$FRONTEND_PID_FILE" "$CELERY_PID_FILE"
-    log_success "PID文件已清理"
+    log_success "PID files cleaned up"
     
-    # 清理Celery临时文件
+    # Clean Celery temp files
     rm -f /tmp/celerybeat-schedule /tmp/celerybeat.pid 2>/dev/null || true
-    log_success "Celery临时文件已清理"
+    log_success "Celery temp files cleaned up"
     
-    # 清理Python缓存
+    # Clean Python cache
     find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
     find . -name "*.pyc" -delete 2>/dev/null || true
-    log_success "Python缓存已清理"
+    log_success "Python cache cleaned up"
 }
 
-# 显示系统状态
+# Show system status
 show_system_status() {
-    log_header "系统状态检查"
+    log_header "System Status Check"
     
     local services_running=false
     
-    # 检查后端服务
+    # Check backend service
     if pgrep -f "uvicorn.*backend.main:app" >/dev/null; then
-        log_warning "后端服务仍在运行"
+        log_warning "Backend service is still running"
         services_running=true
     else
-        log_success "后端服务已停止"
+        log_success "Backend service is stopped"
     fi
     
-    # 检查前端服务
+    # Check frontend service
     if pgrep -f "npm.*dev\|vite" >/dev/null; then
-        log_warning "前端服务仍在运行"
+        log_warning "Frontend service is still running"
         services_running=true
     else
-        log_success "前端服务已停止"
+        log_success "Frontend service is stopped"
     fi
     
-    # 检查Celery Worker
+    # Check Celery Worker
     if pgrep -f "celery.*worker" >/dev/null; then
-        log_warning "Celery Worker仍在运行"
+        log_warning "Celery Worker is still running"
         services_running=true
     else
-        log_success "Celery Worker已停止"
+        log_success "Celery Worker is stopped"
     fi
     
     if [[ "$services_running" == true ]]; then
-        log_warning "部分服务仍在运行，可能需要手动停止"
+        log_warning "Some services are still running, manual stop might be needed"
         echo ""
-        echo "仍在运行的进程:"
+        echo "Processes still running:"
         pgrep -f "uvicorn.*backend.main:app\|npm.*dev\|vite\|celery.*worker" | while read pid; do
             ps -p "$pid" -o pid,ppid,cmd --no-headers 2>/dev/null || true
         done
     else
-        log_success "所有AutoClip服务已完全停止"
+        log_success "All AutoClip services stopped completely"
     fi
 }
 
-# 显示日志信息
+# Show log info
 show_log_info() {
-    log_header "日志文件信息"
+    log_header "Log File Information"
     
     if [[ -d "$LOG_DIR" ]]; then
-        echo "日志文件位置:"
+        echo "Log file locations:"
         ls -la "$LOG_DIR"/*.log 2>/dev/null | while read line; do
             echo "  $line"
         done
         echo ""
-        echo "查看最新日志:"
-        echo "  后端日志: tail -f $LOG_DIR/backend.log"
-        echo "  前端日志: tail -f $LOG_DIR/frontend.log"
-        echo "  Celery日志: tail -f $LOG_DIR/celery.log"
+        echo "View latest logs:"
+        echo "  Backend logs: tail -f $LOG_DIR/backend.log"
+        echo "  Frontend logs: tail -f $LOG_DIR/frontend.log"
+        echo "  Celery logs: tail -f $LOG_DIR/celery.log"
     else
-        log_info "日志目录不存在"
+        log_info "Log directory does not exist"
     fi
 }
 
 # =============================================================================
-# 主函数
+# Main Function
 # =============================================================================
 
 main() {
-    log_header "AutoClip 系统停止器 v2.0"
+    log_header "AutoClip System Stopper v2.0"
     
-    # 停止所有服务
+    # Stop all services
     stop_all_processes
     
-    # 清理临时文件
+    # Clean temp files
     cleanup_temp_files
     
-    # 显示系统状态
+    # Show system status
     show_system_status
     
-    # 显示日志信息
+    # Show log info
     show_log_info
     
     echo ""
-    log_success "AutoClip 系统已完全停止"
+    log_success "AutoClip System has been completely stopped"
     echo ""
-    echo "如需重新启动，请运行: ./start_autoclip.sh"
+    echo "To start again, run: ./start_autoclip.sh"
 }
 
-# 运行主函数
+# Run main function
 main "$@"

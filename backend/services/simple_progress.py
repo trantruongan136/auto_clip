@@ -26,17 +26,29 @@ WEIGHTS = {name: w for name, w in STAGES}
 # 阶段顺序
 ORDER = [name for name, _ in STAGES]
 
-# Redis连接 - 使用项目现有的Redis配置
-try:
-    # 从环境变量获取Redis URL，默认为本地地址
-    redis_url = os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0")
-    r = redis.Redis.from_url(redis_url, decode_responses=True)
-    # 测试连接
-    r.ping()
-    logger.info("Redis连接成功")
-except Exception as e:
-    logger.error(f"Redis连接失败: {e}")
-    r = None
+_r = None
+_redis_initialized = False
+
+def _get_redis():
+    global _r, _redis_initialized
+    if _redis_initialized:
+        return _r
+    
+    try:
+        import os
+        import redis
+        # 从环境变量获取Redis URL，默认为本地地址
+        redis_url = os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0")
+        _r = redis.Redis.from_url(redis_url, decode_responses=True)
+        # 测试连接
+        _r.ping()
+        logger.info("Redis连接成功")
+    except Exception as e:
+        logger.error(f"Redis连接失败: {e}")
+        _r = None
+        
+    _redis_initialized = True
+    return _r
 
 
 def compute_percent(stage: str, subpercent: Optional[float] = None) -> int:
@@ -79,6 +91,7 @@ def emit_progress(project_id: str, stage: str, message: str = "", subpercent: Op
         message: 进度消息
         subpercent: 子进度百分比，可选
     """
+    r = _get_redis()
     if not r:
         logger.warning("Redis未连接，跳过进度发送")
         return
@@ -120,6 +133,7 @@ def get_progress_snapshot(project_id: str) -> Optional[Dict[str, Any]]:
     Returns:
         进度快照数据，如果不存在返回None
     """
+    r = _get_redis()
     if not r:
         return None
         
@@ -150,6 +164,7 @@ def get_multiple_progress_snapshots(project_ids: List[str]) -> List[Dict[str, An
     Returns:
         进度快照列表
     """
+    r = _get_redis()
     if not r:
         return []
         
@@ -169,6 +184,7 @@ def clear_progress(project_id: str):
     Args:
         project_id: 项目ID
     """
+    r = _get_redis()
     if not r:
         return
         
