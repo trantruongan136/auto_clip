@@ -29,22 +29,22 @@ api.interceptors.response.use(
   (error) => {
     console.error('API Error:', error)
     
-    // 特殊处理429错误（系统繁忙）
+    // Special handle 429 error (System busy)
     if (error.response?.status === 429) {
-      const message = error.response?.data?.detail || '系统正在处理其他项目，请稍后再试'
+      const message = error.response?.data?.detail || 'System is processing other projects, please try again later.'
       error.userMessage = message
     }
-    // 处理超时错误
+    // Handle timeout error
     else if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-      error.userMessage = '请求超时，项目可能仍在后台处理中，请稍后查看项目状态'
+      error.userMessage = 'Request timeout. The project may still be processing in the background. Please check project status later.'
     }
-    // 处理网络错误
+    // Handle network error
     else if (error.code === 'NETWORK_ERROR' || !error.response) {
-      error.userMessage = '网络连接失败，请检查网络连接'
+      error.userMessage = 'Network connection failed, please check your connection.'
     }
-    // 处理服务器错误
+    // Handle server error
     else if (error.response?.status >= 500) {
-      error.userMessage = '服务器内部错误，请稍后重试'
+      error.userMessage = 'Internal server error, please try again later.'
     }
     
     return Promise.reject(error)
@@ -424,7 +424,7 @@ export const projectApi = {
       
       return response.data
     } catch (error) {
-      console.error('下载失败:', error)
+      console.error('Download failed:', error)
       throw error
     }
   },

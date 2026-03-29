@@ -112,7 +112,7 @@ const BilibiliDownload: React.FC<BilibiliDownloadProps> = ({ onDownloadSuccess }
 
     const videoType = getVideoType(url.trim())
     if (!videoType) {
-      setError('Please enter the correctBstand orYouTubeVideo link')
+      setError('Please enter a valid Bilibili or YouTube video link')
       return
     }
 
@@ -227,8 +227,8 @@ const BilibiliDownload: React.FC<BilibiliDownloadProps> = ({ onDownloadSuccess }
         resetForm()
         
         // Display unified success prompt
-        const platformName = videoType === 'bilibili' ? 'Bstand' : 'YouTube'
-        message.success(`${platformName}The project was created successfully and is being downloaded in the background. You can continue to add other projects.`)
+        const platformName = videoType === 'bilibili' ? 'Bilibili' : 'YouTube'
+        message.success(`${platformName} project created successfully. Video is being downloaded in the background.`)
         
         if (onDownloadSuccess) {
           onDownloadSuccess(response.project_id)
@@ -278,7 +278,7 @@ const BilibiliDownload: React.FC<BilibiliDownloadProps> = ({ onDownloadSuccess }
         <Space direction="vertical" style={{ width: '100%' }} size={16}>
           <div>
             <Input.TextArea
-              placeholder="Please pasteBstand orYouTubeVideo link, support:• Bstand:https://www.bilibili.com/video/BV1xx411c7mu • YouTube:https://www.youtube.com/watch?v=xxxxx"
+              placeholder="Paste Bilibili or YouTube link here. Supported:&#10;• Bilibili: https://www.bilibili.com/video/BV1xx411c7mu&#10;• YouTube: https://www.youtube.com/watch?v=xxxxx"
               value={url}
               onChange={(e) => {
                 setUrl(e.target.value)
@@ -350,7 +350,7 @@ const BilibiliDownload: React.FC<BilibiliDownloadProps> = ({ onDownloadSuccess }
                 {videoInfo.title}
               </Text>
               <Text style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '12px' }}>
-                {getVideoType(url) === 'bilibili' ? 'UPhost' : 'channel'}: {videoInfo.uploader || 'unknown'} • duration: {videoInfo.duration ? `${Math.floor(videoInfo.duration / 60)}:${String(Math.floor(videoInfo.duration % 60)).padStart(2, '0')}` : 'unknown'}
+                {getVideoType(url) === 'bilibili' ? 'Uploader' : 'Channel'}: {videoInfo.uploader || 'Unknown'} • Duration: {videoInfo.duration ? `${Math.floor(videoInfo.duration / 60)}:${String(Math.floor(videoInfo.duration % 60)).padStart(2, '0')}` : 'Unknown'}
               </Text>
             </div>
           )}
@@ -377,9 +377,9 @@ const BilibiliDownload: React.FC<BilibiliDownloadProps> = ({ onDownloadSuccess }
               </div>
               
               <div>
-                <Text style={{ color: '#ffffff', marginBottom: '12px', display: 'block', fontSize: '16px', fontWeight: 500 }}>Browser selection (getAIsubtitles required)</Text>
+                <Text style={{ color: '#ffffff', marginBottom: '12px', display: 'block', fontSize: '16px', fontWeight: 500 }}>Browser Selection (Required for AI Subtitles)</Text>
                 <Select
-                  placeholder="Select browser to getcookie(optional)"
+                  placeholder="Select browser to import cookies (optional)"
                   value={selectedBrowser || undefined}
                   onChange={(value) => setSelectedBrowser(value || '')}
                   allowClear
@@ -400,7 +400,7 @@ const BilibiliDownload: React.FC<BilibiliDownloadProps> = ({ onDownloadSuccess }
                   <Select.Option value="edge">Edge</Select.Option>
                 </Select>
                 <Text style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '12px', marginTop: '8px', display: 'block' }}>
-                  Select a browser to get login status for downloadingAIsubtitle.If you do not choose, you will only be able to download public subtitles.
+                  Select a browser to import your login status for AI subtitles. If unselected, only public subtitles will be available.
                 </Text>
               </div>
               
@@ -490,7 +490,7 @@ const BilibiliDownload: React.FC<BilibiliDownloadProps> = ({ onDownloadSuccess }
               minWidth: '160px'
             }}
           >
-            {downloading ? 'Importing...' : 'Start importing'}
+            {downloading ? 'Importing...' : 'Start Import'}
           </Button>
           
           {downloading && (

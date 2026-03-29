@@ -22,7 +22,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
     video?: File
     srt?: File
   }>({})
-  
+
   const { addProject } = useProjectStore()
 
   // Load video classification configuration
@@ -51,10 +51,10 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
 
   const onDrop = (acceptedFiles: File[]) => {
     const newFiles = { ...files }
-    
+
     acceptedFiles.forEach(file => {
       const extension = file.name.split('.').pop()?.toLowerCase()
-      
+
       if (['mp4', 'avi', 'mov', 'mkv', 'webm'].includes(extension || '')) {
         newFiles.video = file
         // Automatically set the project name to the video file name (remove the extension)
@@ -64,7 +64,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
         newFiles.srt = file
       }
     })
-    
+
     setFiles(newFiles)
   }
 
@@ -90,7 +90,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
 
     setUploading(true)
     setUploadProgress(0)
-    
+
     try {
       // Simulate upload progress and display progress more realistically
       const progressInterval = setInterval(() => {
@@ -118,15 +118,15 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
         project_name: projectName.trim(),
         video_category: selectedCategory
       })
-      
+
       console.log('Upload successful, project information:', newProject)
-      
+
       clearInterval(progressInterval)
       setUploadProgress(100)
-      
+
       addProject(newProject)
-      message.success('Project created successfully!Processing in the background, please wait....')
-      
+      message.success('Project created successfully! Processing in the background...')
+
       // reset state
       setFiles({})
       setProjectName('')
@@ -136,17 +136,17 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
       if (categories.length > 0) {
         setSelectedCategory(categories[0].value)
       }
-      
+
       if (onUploadSuccess) {
         onUploadSuccess(newProject.id)
       }
-      
+
     } catch (error: any) {
       console.error('Upload failed, detailed error:', error)
-      
+
       let errorMessage = 'Upload failed, please try again'
       let errorType = 'error'
-      
+
       // Provide friendlier error messages based on error type
       if (error.response?.status === 413) {
         errorMessage = 'File is too large, please choose a smaller video file'
@@ -171,14 +171,14 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
       } else if (error.message) {
         errorMessage = error.message
       }
-      
+
       // Show error message
       if (errorType === 'warning') {
         message.warning(errorMessage)
       } else {
         message.error(errorMessage)
       }
-      
+
       // If it is a network error, provide retry suggestions
       if (error.code === 'ECONNABORTED' || error.response?.status >= 500) {
         message.info('If the problem persists, check your network connection or contact technical support', 5)
@@ -216,11 +216,11 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
         background: 'radial-gradient(circle, rgba(79, 172, 254, 0.08) 0%, transparent 70%)',
         pointerEvents: 'none'
       }} />
-      
 
-      
-      <div 
-        {...getRootProps()} 
+
+
+      <div
+        {...getRootProps()}
         className={`upload-area ${isDragActive ? 'dragover' : ''}`}
         style={{
           padding: '24px 16px',
@@ -248,13 +248,13 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
           transition: 'all 0.3s ease',
           border: '1px solid rgba(79, 172, 254, 0.2)'
         }}>
-          <InboxOutlined style={{ 
-            fontSize: '20px', 
+          <InboxOutlined style={{
+            fontSize: '20px',
             color: isDragActive ? '#4facfe' : '#4facfe'
           }} />
         </div>
         <div>
-          <Text strong style={{ 
+          <Text strong style={{
             color: '#ffffff',
             fontSize: '16px',
             display: 'block',
@@ -264,7 +264,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
             {isDragActive ? 'Release the mouse to import the file' : 'Click or drag files into this area'}
           </Text>
           <Text style={{ color: '#cccccc', fontSize: '14px', lineHeight: '1.5' }}>
-            support MP4,AVI,MOV,MKV,WebM Format,<Text style={{ color: '#52c41a', fontWeight: 600 }}>Option to import subtitle files(.srt)or useAIAutomatically generated</Text>
+            Supports MP4, AVI, MOV, MKV, WebM formats. <Text style={{ color: '#52c41a', fontWeight: 600 }}>Optionally import subtitles (.srt) or let AI generate them automatically.</Text>
           </Text>
         </div>
       </div>
@@ -279,7 +279,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
             value={projectName}
             onChange={(e) => setProjectName(e.target.value)}
             placeholder="Please enter a project name to identify your video project"
-            style={{ 
+            style={{
               height: '40px',
               borderRadius: '12px',
               fontSize: '14px',
@@ -314,15 +314,15 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
                     gap: '6px',
                     padding: '8px 12px',
                     borderRadius: '6px',
-                    border: isSelected 
-                      ? `2px solid ${category.color}` 
+                    border: isSelected
+                      ? `2px solid ${category.color}`
                       : '2px solid rgba(255, 255, 255, 0.1)',
-                    background: isSelected 
-                      ? `${category.color}25` 
+                    background: isSelected
+                      ? `${category.color}25`
                       : 'rgba(255, 255, 255, 0.05)',
                     color: isSelected ? '#ffffff' : 'rgba(255, 255, 255, 0.8)',
-                    boxShadow: isSelected 
-                      ? `0 0 12px ${category.color}40` 
+                    boxShadow: isSelected
+                      ? `0 0 12px ${category.color}40`
                       : 'none',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
@@ -360,9 +360,9 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
           </Text>
           <Space direction="vertical" style={{ width: '100%' }} size="small">
             {files.video && (
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '16px',
                 background: 'rgba(38, 38, 38, 0.8)',
@@ -392,11 +392,11 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
                     </Text>
                   </div>
                 </Space>
-                <Button 
-                  size="small" 
-                  type="text" 
+                <Button
+                  size="small"
+                  type="text"
                   onClick={() => removeFile('video')}
-                  style={{ 
+                  style={{
                     color: '#ff6b6b',
                     borderRadius: '8px',
                     padding: '4px 12px',
@@ -408,9 +408,9 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
               </div>
             )}
             {files.srt && (
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '16px',
                 background: 'rgba(38, 38, 38, 0.8)',
@@ -440,11 +440,11 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
                     </Text>
                   </div>
                 </Space>
-                <Button 
-                  size="small" 
-                  type="text" 
+                <Button
+                  size="small"
+                  type="text"
                   onClick={() => removeFile('srt')}
-                  style={{ 
+                  style={{
                     color: '#ff6b6b',
                     borderRadius: '8px',
                     padding: '4px 12px',
@@ -456,7 +456,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
               </div>
             )}
           </Space>
-          
+
           {/* AISubtitle generation tips */}
           {files.video && !files.srt && (
             <div style={{
@@ -471,7 +471,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
             }}>
               <SubnodeOutlined style={{ color: '#52c41a', fontSize: '16px' }} />
               <Text style={{ color: '#52c41a', fontSize: '14px', fontWeight: 500 }}>
-                will useAISpeech recognition automatically generates subtitle files
+                AI will automatically generate subtitles using speech recognition
               </Text>
             </div>
           )}
@@ -480,7 +480,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
 
       {/* Import progress */}
       {uploading && (
-        <div style={{ 
+        <div style={{
           marginBottom: '16px',
           padding: '20px',
           background: 'rgba(38, 38, 38, 0.8)',
@@ -494,8 +494,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
               {uploadProgress}%
             </Text>
           </div>
-          <Progress 
-            percent={uploadProgress} 
+          <Progress
+            percent={uploadProgress}
             status="active"
             strokeColor={{
               '0%': '#4facfe',
@@ -515,8 +515,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
       {/* upload button - Only shown after selecting a file */}
       {files.video && (
         <div style={{ textAlign: 'center', marginTop: '8px' }}>
-          <Button 
-            type="primary" 
+          <Button
+            type="primary"
             size="large"
             loading={uploading}
             disabled={!files.video || !projectName.trim()}
@@ -533,7 +533,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
               transition: 'all 0.3s ease'
             }}
           >
-            {uploading ? 'Importing...' : 'Start importing and processing'}
+            {uploading ? 'Importing...' : 'Start Import and Processing'}
           </Button>
         </div>
       )}

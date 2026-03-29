@@ -147,12 +147,12 @@ export const useSimpleProgressStore = create<SimpleProgressState>((set, get) => 
 
 // Stage display name mapping
 export const STAGE_DISPLAY_NAMES: Record<string, string> = {
-  'INGEST': 'Material preparation',
-  'SUBTITLE': 'subtitle processing',
-  'ANALYZE': 'content analysis', 
-  'HIGHLIGHT': 'Fragment positioning',
-  'EXPORT': 'Video export',
-  'DONE': 'Processing completed'
+  'INGEST': 'Preparing Media',
+  'SUBTITLE': 'Processing Subtitles',
+  'ANALYZE': 'Analyzing Content', 
+  'HIGHLIGHT': 'Identifying Highlights',
+  'EXPORT': 'Exporting Video',
+  'DONE': 'Completed'
 }
 
 // Stage color mapping

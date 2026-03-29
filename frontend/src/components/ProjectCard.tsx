@@ -15,12 +15,12 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import 'dayjs/locale/zh-cn'
+import 'dayjs/locale/en'
 
 dayjs.extend(relativeTime)
 dayjs.extend(timezone)
 dayjs.extend(utc)
-dayjs.locale('zh-cn')
+dayjs.locale('en')
 
 // Add toCSSanimation style
 const pulseAnimation = `
@@ -75,21 +75,21 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
   // Get classified information
   const getCategoryInfo = (category?: string) => {
     const categoryMap: Record<string, { name: string; icon: string; color: string }> = {
-      'default': { name: 'default', icon: '🎬', color: '#4facfe' },
-      'knowledge': { name: 'Knowledge popularization', icon: '📚', color: '#52c41a' },
+      'default': { name: 'Default', icon: '🎬', color: '#4facfe' },
+      'knowledge': { name: 'Knowledge Popularization', icon: '📚', color: '#52c41a' },
       'business': { name: 'Business and Finance', icon: '💼', color: '#faad14' },
-      'opinion': { name: 'Opinion comments', icon: '💭', color: '#722ed1' },
-      'experience': { name: 'Experience sharing', icon: '🌟', color: '#13c2c2' },
-      'speech': { name: 'speech talk show', icon: '🎤', color: '#eb2f96' },
-      'content_review': { name: 'Content explanation', icon: '🎭', color: '#f5222d' },
-      'entertainment': { name: 'entertainment content', icon: '🎪', color: '#fa8c16' }
+      'opinion': { name: 'Opinion Comments', icon: '💭', color: '#722ed1' },
+      'experience': { name: 'Experience Sharing', icon: '🌟', color: '#13c2c2' },
+      'speech': { name: 'Talk Show', icon: '🎤', color: '#eb2f96' },
+      'content_review': { name: 'Content Explanation', icon: '🎭', color: '#f5222d' },
+      'entertainment': { name: 'Entertainment', icon: '🎪', color: '#fa8c16' }
     }
     return categoryMap[category || 'default'] || categoryMap['default']
   }
 
   // Thumbnail cache management
   const thumbnailCacheKey = `thumbnail_${project.id}`
-  
+
   // Generate project video thumbnails (with caching)
   useEffect(() => {
     const generateThumbnail = async () => {
@@ -99,27 +99,27 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
         console.log(`Use thumbnails provided by the backend: ${project.id}`)
         return
       }
-      
+
       if (!project.video_path) {
         console.log('Project has no video path:', project.id)
         return
       }
-      
+
       // Check cache
       const cachedThumbnail = localStorage.getItem(thumbnailCacheKey)
       if (cachedThumbnail) {
         setVideoThumbnail(cachedThumbnail)
         return
       }
-      
+
       setThumbnailLoading(true)
-      
+
       try {
         const video = document.createElement('video')
         video.crossOrigin = 'anonymous'
         video.muted = true
         video.preload = 'metadata'
-        
+
         // Try multiple possible video file paths
         const possiblePaths = [
           'input/input.mp4',
@@ -127,27 +127,27 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
           project.video_path,
           `${project.video_path}/input.mp4`
         ].filter(Boolean)
-        
+
         let videoLoaded = false
-        
+
         for (const path of possiblePaths) {
           if (videoLoaded) break
-          
+
           try {
             const videoUrl = projectApi.getProjectFileUrl(project.id, path)
             console.log('Try loading video:', videoUrl)
-            
+
             await new Promise((resolve, reject) => {
               const timeoutId = setTimeout(() => {
                 reject(new Error('Video loading timeout'))
               }, 10000) // 10seconds timeout
-              
+
               video.onloadedmetadata = () => {
                 clearTimeout(timeoutId)
                 console.log('Video metadata loaded successfully:', videoUrl)
                 video.currentTime = Math.min(5, video.duration / 4) // Get video1/4at or5frame in seconds
               }
-              
+
               video.onseeked = () => {
                 clearTimeout(timeoutId)
                 try {
@@ -157,28 +157,28 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                     reject(new Error('Unable to obtaincanvascontext'))
                     return
                   }
-                  
+
                   // Set appropriate thumbnail size
                   const maxWidth = 320
                   const maxHeight = 180
                   const aspectRatio = video.videoWidth / video.videoHeight
-                  
+
                   let width = maxWidth
                   let height = maxHeight
-                  
+
                   if (aspectRatio > maxWidth / maxHeight) {
                     height = maxWidth / aspectRatio
                   } else {
                     width = maxHeight * aspectRatio
                   }
-                  
+
                   canvas.width = width
                   canvas.height = height
                   ctx.drawImage(video, 0, 0, width, height)
-                  
+
                   const thumbnail = canvas.toDataURL('image/jpeg', 0.7)
                   setVideoThumbnail(thumbnail)
-                  
+
                   // Caching thumbnails
                   try {
                     localStorage.setItem(thumbnailCacheKey, thumbnail)
@@ -190,30 +190,30 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                       localStorage.setItem(thumbnailCacheKey, thumbnail)
                     }
                   }
-                  
+
                   videoLoaded = true
                   resolve(thumbnail)
                 } catch (error) {
                   reject(error)
                 }
               }
-              
+
               video.onerror = (error) => {
                 clearTimeout(timeoutId)
                 console.error('Video loading failed:', videoUrl, error)
                 reject(error)
               }
-              
+
               video.src = videoUrl
             })
-            
+
             break // If loaded successfully, break out of the loop
           } catch (error) {
             console.warn(`path ${path} Loading failed:`, error)
             continue // try next path
           }
         }
-        
+
         if (!videoLoaded) {
           console.error('All video paths failed to load')
         }
@@ -223,7 +223,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
         setThumbnailLoading(false)
       }
     }
-    
+
     generateThumbnail()
   }, [project.id, project.video_path, thumbnailCacheKey])
 
@@ -237,9 +237,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
     const fetchLogs = async () => {
       try {
         const response = await projectApi.getProjectLogs(project.id, 20)
-        setLogs(response.logs.filter(log => 
-          log.message.includes('Step') || 
-          log.message.includes('start') || 
+        setLogs(response.logs.filter(log =>
+          log.message.includes('Step') ||
+          log.message.includes('start') ||
           log.message.includes('Finish') ||
           log.message.includes('deal with') ||
           log.level === 'ERROR'
@@ -251,21 +251,21 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
 
     // Get it now
     fetchLogs()
-    
+
     // Every3Update log every second
     const logInterval = setInterval(fetchLogs, 3000)
-    
+
     return () => clearInterval(logInterval)
   }, [project.id, project.status])
 
   // Log carousel
   useEffect(() => {
     if (logs.length <= 1) return
-    
+
     const interval = setInterval(() => {
       setCurrentLogIndex(prev => (prev + 1) % logs.length)
     }, 2000) // Every2Switch a log in seconds
-    
+
     return () => clearInterval(interval)
   }, [logs.length])
 
@@ -281,11 +281,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
 
   // Check whether it is waiting for processing - pendingThe status is shown as Importing
   const isImporting = project.status === 'pending'
-  
+
   // Status standardization - pendingThe status is shown as Importing
-  const normalizedStatus = project.status === 'error' ? 'failed' : 
-                          isImporting ? 'importing' : project.status
-  
+  const normalizedStatus = project.status === 'error' ? 'failed' :
+    isImporting ? 'importing' : project.status
+
   // debugging information
   console.log('ProjectCard Debug:', {
     projectId: project.id,
@@ -294,18 +294,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
     normalizedStatus,
     processingConfig: project.processing_config
   })
-  
+
   // Calculate progress percentage
-  const progressPercent = project.status === 'completed' ? 100 : 
-                         project.status === 'failed' ? 0 :
-                         isImporting ? 20 : // Displayed during import20%schedule
-                         project.current_step && project.total_steps ? 
-                         Math.round((project.current_step / project.total_steps) * 100) : 
-                         project.status === 'processing' ? 10 : 0
+  const progressPercent = project.status === 'completed' ? 100 :
+    project.status === 'failed' ? 0 :
+      isImporting ? 20 : // Displayed during import20%schedule
+        project.current_step && project.total_steps ?
+          Math.round((project.current_step / project.total_steps) * 100) :
+          project.status === 'processing' ? 10 : 0
 
   const handleRetry = async () => {
     if (isRetrying) return
-    
+
     setIsRetrying(true)
     try {
       // forPENDINGstatus items, usestartProcessing;For other states, useretryProcessing
@@ -330,8 +330,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
     <Card
       hoverable
       className="project-card"
-      style={{ 
-        width: 200, 
+      style={{
+        width: 200,
         height: 240,
         borderRadius: '4px',
         overflow: 'hidden',
@@ -358,12 +358,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
         flexDirection: 'column'
       }}
       cover={
-        <div 
-          style={{ 
-            height: 120, 
+        <div
+          style={{
+            height: 120,
             position: 'relative',
-            background: videoThumbnail 
-              ? `url(${videoThumbnail}) center/cover` 
+            background: videoThumbnail
+              ? `url(${videoThumbnail}) center/cover`
               : 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
             display: 'flex',
             alignItems: 'center',
@@ -376,7 +376,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
               message.warning('The project is being imported, please check for details later.')
               return
             }
-            
+
             if (onClick) {
               onClick()
             } else {
@@ -386,17 +386,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
         >
           {/* Thumbnail loading status */}
           {thumbnailLoading && (
-            <div style={{ 
+            <div style={{
               textAlign: 'center',
               color: 'rgba(255, 255, 255, 0.8)'
             }}>
-              <LoadingOutlined 
-                style={{ 
-                  fontSize: '24px', 
+              <LoadingOutlined
+                style={{
+                  fontSize: '24px',
                   marginBottom: '4px'
-                }} 
+                }}
               />
-              <div style={{ 
+              <div style={{
                 fontSize: '12px',
                 fontWeight: 500
               }}>
@@ -404,20 +404,20 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
               </div>
             </div>
           )}
-          
+
           {/* Default display without thumbnails */}
           {!videoThumbnail && !thumbnailLoading && (
             <div style={{ textAlign: 'center' }}>
-              <PlayCircleOutlined 
-                style={{ 
-                  fontSize: '40px', 
+              <PlayCircleOutlined
+                style={{
+                  fontSize: '40px',
                   color: 'rgba(255, 255, 255, 0.9)',
                   marginBottom: '4px',
                   filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))'
-                }} 
+                }}
               />
-              <div style={{ 
-                color: 'rgba(255, 255, 255, 0.8)', 
+              <div style={{
+                color: 'rgba(255, 255, 255, 0.8)',
                 fontSize: '12px',
                 fontWeight: 500
               }}>
@@ -425,7 +425,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
               </div>
             </div>
           )}
-          
+
           {/* Classification tags - upper left corner */}
           {project.video_category && project.video_category !== 'default' && (
             <div style={{
@@ -452,9 +452,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
               </Tag>
             </div>
           )}
-          
+
           {/* Remove status indicator in upper right corner - Poor readability and redundant */}
-          
+
           {/* Update time and action buttons - Move to bottom of cover */}
           <div style={{
             position: 'absolute',
@@ -473,9 +473,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
             <Text style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)' }}>
               {dayjs(project.created_at).tz('Asia/Shanghai').fromNow()}
             </Text>
-            
+
             {/* Action button */}
-            <div 
+            <div
               className="card-action-buttons"
               style={{
                 display: 'flex',
@@ -507,7 +507,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                       fontSize: '10px'
                     }}
                   />
-                  
+
                   <Popconfirm
                     title="Are you sure you want to delete this item?"
                     description="Unable to recover after deletion"
@@ -570,7 +570,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                         />
                       </Tooltip>
                     )}
-                    
+
                     {/* download button - Only shown in completed state */}
                     {normalizedStatus === 'completed' && (
                       <Button
@@ -594,7 +594,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                         }}
                       />
                     )}
-                    
+
                     {/* delete button */}
                     <Popconfirm
                       title="Are you sure you want to delete this item?"
@@ -629,8 +629,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                       />
                     </Popconfirm>
                   </Space>
-                 </>
-               )}
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -641,10 +641,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
           {/* Project name - always on top */}
           <div style={{ marginBottom: '12px', position: 'relative' }}>
             <Tooltip title={project.name} placement="top">
-              <Text 
-                strong 
-                style={{ 
-                  fontSize: '13px', 
+              <Text
+                strong
+                style={{
+                  fontSize: '13px',
                   color: '#ffffff',
                   fontWeight: 600,
                   lineHeight: '16px',
@@ -661,12 +661,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
               </Text>
             </Tooltip>
           </div>
-          
+
           {/* Status and statistics */}
           {(normalizedStatus === 'importing' || normalizedStatus === 'processing' || normalizedStatus === 'failed') ? (
             // Importing, processing, failed: only the status block is displayed, centered.
-            <div style={{ 
-              display: 'flex', 
+            <div style={{
+              display: 'flex',
               justifyContent: 'center',
               marginBottom: '12px'
             }}>
@@ -686,8 +686,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
             </div>
           ) : (
             // Other status: display status block + Number of slices + Number of collections
-            <div style={{ 
-              display: 'flex', 
+            <div style={{
+              display: 'flex',
               gap: '6px',
               marginBottom: '12px'
             }}>
@@ -705,7 +705,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                   }}
                 />
               </div>
-              
+
               {/* Number of slices - Reduce width */}
               <div style={{
                 background: 'rgba(102, 126, 234, 0.15)',
@@ -720,10 +720,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                   {project.total_clips || 0}
                 </div>
                 <div style={{ color: '#999999', fontSize: '8px', lineHeight: '9px' }}>
-                  slice
+                  Clips
                 </div>
               </div>
-              
+
               {/* Collection quantity - Reduce width */}
               <div style={{
                 background: 'rgba(118, 75, 162, 0.15)',
@@ -738,7 +738,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                   {project.total_collections || 0}
                 </div>
                 <div style={{ color: '#999999', fontSize: '8px', lineHeight: '9px' }}>
-                  Collection
+                  Collections
                 </div>
               </div>
             </div>

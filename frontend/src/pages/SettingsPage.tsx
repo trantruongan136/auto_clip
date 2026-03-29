@@ -17,39 +17,39 @@ const SettingsPage: React.FC = () => {
   const [currentProvider, setCurrentProvider] = useState<any>({})
   const [selectedProvider, setSelectedProvider] = useState('dashscope')
 
-  // 提供商配置
+  // Provider configuration
   const providerConfig = {
     dashscope: {
-      name: '阿里通义千问',
+      name: 'Alibaba Tongyi Qianwen',
       icon: <RobotOutlined />,
       color: '#1890ff',
-      description: '阿里云通义千问大模型服务',
+      description: 'Alibaba Cloud Tongyi Qianwen LLM Service',
       apiKeyField: 'dashscope_api_key',
-      placeholder: '请输入通义千问API密钥'
+      placeholder: 'Enter Tongyi Qianwen API Key'
     },
     openai: {
       name: 'OpenAI',
       icon: <RobotOutlined />,
       color: '#52c41a',
-      description: 'OpenAI GPT系列模型',
+      description: 'OpenAI GPT model series',
       apiKeyField: 'openai_api_key',
-      placeholder: '请输入OpenAI API密钥'
+      placeholder: 'Enter OpenAI API Key'
     },
     gemini: {
       name: 'Google Gemini',
       icon: <RobotOutlined />,
       color: '#faad14',
-      description: 'Google Gemini大模型',
+      description: 'Google Gemini LLM',
       apiKeyField: 'gemini_api_key',
-      placeholder: '请输入Gemini API密钥'
+      placeholder: 'Enter Gemini API Key'
     },
     siliconflow: {
-      name: '硅基流动',
+      name: 'SiliconFlow',
       icon: <RobotOutlined />,
       color: '#722ed1',
-      description: '硅基流动模型服务',
+      description: 'SiliconFlow Model Service',
       apiKeyField: 'siliconflow_api_key',
-      placeholder: '请输入硅基流动API密钥'
+      placeholder: 'Enter SiliconFlow API Key'
     }
   }
 
@@ -65,15 +65,15 @@ const SettingsPage: React.FC = () => {
         settingsApi.getAvailableModels(),
         settingsApi.getCurrentProvider()
       ])
-      
+
       setAvailableModels(models)
       setCurrentProvider(provider)
       setSelectedProvider(settings.llm_provider || 'dashscope')
-      
+
       // 设置表单初始值
       form.setFieldsValue(settings)
     } catch (error) {
-      console.error('加载数据失败:', error)
+      console.error('Failed to load data:', error)
     }
   }
 
@@ -82,10 +82,10 @@ const SettingsPage: React.FC = () => {
     try {
       setLoading(true)
       await settingsApi.updateSettings(values)
-      message.success('配置保存成功！')
+      message.success('Settings saved successfully!')
       await loadData() // 重新加载数据
     } catch (error: any) {
-      message.error('保存失败: ' + (error.message || '未知错误'))
+      message.error('Save failed: ' + (error.message || 'Unknown error'))
     } finally {
       setLoading(false)
     }
@@ -95,14 +95,14 @@ const SettingsPage: React.FC = () => {
   const handleTestApiKey = async () => {
     const apiKey = form.getFieldValue(providerConfig[selectedProvider as keyof typeof providerConfig].apiKeyField)
     const modelName = form.getFieldValue('model_name')
-    
+
     if (!apiKey) {
-      message.error('请先输入API密钥')
+      message.error('Please enter an API key first')
       return
     }
 
     if (!modelName) {
-      message.error('请先选择模型')
+      message.error('Please select a model first')
       return
     }
 
@@ -110,12 +110,12 @@ const SettingsPage: React.FC = () => {
       setLoading(true)
       const result = await settingsApi.testApiKey(selectedProvider, apiKey, modelName)
       if (result.success) {
-        message.success('API密钥测试成功！')
+        message.success('API key test successful!')
       } else {
-        message.error('API密钥测试失败: ' + (result.error || '未知错误'))
+        message.error('API key test failed: ' + (result.error || 'Unknown error'))
       }
     } catch (error: any) {
-      message.error('测试失败: ' + (error.message || '未知错误'))
+      message.error('Test failed: ' + (error.message || 'Unknown error'))
     } finally {
       setLoading(false)
     }
@@ -131,20 +131,20 @@ const SettingsPage: React.FC = () => {
     <Content className="settings-page">
       <div className="settings-container">
         <Title level={2} className="settings-title">
-          <SettingOutlined /> 系统设置
+          <SettingOutlined /> System Settings
         </Title>
-        
+
         <Tabs defaultActiveKey="api" className="settings-tabs">
-          <TabPane tab="AI 模型配置" key="api">
-            <Card title="AI 模型配置" className="settings-card">
+          <TabPane tab="AI Model Config" key="api">
+            <Card title="AI Model Configuration" className="settings-card">
               <Alert
-                message="多模型提供商支持"
-                description="系统现在支持多个AI模型提供商，您可以根据需要选择不同的服务商和模型。"
+                message="Multi-Model Provider Support"
+                description="The system now supports multiple AI model providers. You can choose different providers and models as needed."
                 type="info"
                 showIcon
                 className="settings-alert"
               />
-              
+
               <Form
                 form={form}
                 layout="vertical"
@@ -161,7 +161,7 @@ const SettingsPage: React.FC = () => {
                 {/* 当前提供商状态 */}
                 {currentProvider.available && (
                   <Alert
-                    message={`当前使用: ${currentProvider.display_name} - ${currentProvider.model}`}
+                    message={`Currently using: ${currentProvider.display_name} - ${currentProvider.model}`}
                     type="success"
                     showIcon
                     style={{ marginBottom: 24 }}
@@ -170,16 +170,16 @@ const SettingsPage: React.FC = () => {
 
                 {/* 提供商选择 */}
                 <Form.Item
-                  label="选择AI模型提供商"
+                  label="Select AI Model Provider"
                   name="llm_provider"
                   className="form-item"
-                  rules={[{ required: true, message: '请选择AI模型提供商' }]}
+                  rules={[{ required: true, message: 'Please select an AI model provider' }]}
                 >
                   <Select
                     value={selectedProvider}
                     onChange={handleProviderChange}
                     className="settings-input"
-                    placeholder="请选择AI模型提供商"
+                    placeholder="Select AI model provider"
                   >
                     {Object.entries(providerConfig).map(([key, config]) => (
                       <Select.Option key={key} value={key}>
@@ -193,14 +193,14 @@ const SettingsPage: React.FC = () => {
                   </Select>
                 </Form.Item>
 
-                {/* 动态API密钥输入 */}
+                {/* Dynamic API key input */}
                 <Form.Item
                   label={`${providerConfig[selectedProvider as keyof typeof providerConfig].name} API Key`}
                   name={providerConfig[selectedProvider as keyof typeof providerConfig].apiKeyField}
                   className="form-item"
                   rules={[
-                    { required: true, message: '请输入API密钥' },
-                    { min: 10, message: 'API密钥长度不能少于10位' }
+                    { required: true, message: 'Please enter an API key' },
+                    { min: 10, message: 'API key must be at least 10 characters' }
                   ]}
                 >
                   <Input.Password
@@ -210,16 +210,16 @@ const SettingsPage: React.FC = () => {
                   />
                 </Form.Item>
 
-                {/* 模型选择 */}
+                {/* Model selection */}
                 <Form.Item
-                  label="选择模型"
+                  label="Select Model"
                   name="model_name"
                   className="form-item"
-                  rules={[{ required: true, message: '请选择模型' }]}
+                  rules={[{ required: true, message: 'Please select a model' }]}
                 >
                   <Select
                     className="settings-input"
-                    placeholder="请选择模型"
+                    placeholder="Select a model"
                     showSearch
                     filterOption={(input, option) =>
                       (option?.children as string)?.toLowerCase().includes(input.toLowerCase())
@@ -229,7 +229,7 @@ const SettingsPage: React.FC = () => {
                       <Select.Option key={model.name} value={model.name}>
                         <Space>
                           <span>{model.display_name}</span>
-                          <Tag size="small">最大{model.max_tokens} tokens</Tag>
+                          <Tag size="small">Max {model.max_tokens} tokens</Tag>
                         </Space>
                       </Select.Option>
                     ))}
@@ -245,19 +245,19 @@ const SettingsPage: React.FC = () => {
                       onClick={handleTestApiKey}
                       loading={loading}
                     >
-                      测试连接
+                      Test Connection
                     </Button>
                   </Space>
                 </Form.Item>
 
                 <Divider className="settings-divider" />
 
-                <Title level={4} className="section-title">模型配置</Title>
-                
+                <Title level={4} className="section-title">Model Configuration</Title>
+
                 <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item
-                      label="模型名称"
+                      label="Model Name"
                       name="model_name"
                       className="form-item"
                     >
@@ -266,14 +266,14 @@ const SettingsPage: React.FC = () => {
                   </Col>
                   <Col span={12}>
                     <Form.Item
-                      label="文本分块大小"
+                      label="Text Chunk Size"
                       name="chunk_size"
                       className="form-item"
                     >
-                      <Input 
-                        type="number" 
-                        placeholder="5000" 
-                        addonAfter="字符" 
+                      <Input
+                        type="number"
+                        placeholder="5000"
+                        addonAfter="chars"
                         className="settings-input"
                       />
                     </Form.Item>
@@ -283,30 +283,30 @@ const SettingsPage: React.FC = () => {
                 <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item
-                      label="最低评分阈值"
+                      label="Minimum Score Threshold"
                       name="min_score_threshold"
                       className="form-item"
                     >
-                      <Input 
-                        type="number" 
-                        step="0.1" 
-                        min="0" 
-                        max="1" 
-                        placeholder="0.7" 
+                      <Input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="1"
+                        placeholder="0.7"
                         className="settings-input"
                       />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item
-                      label="每个合集最大切片数"
+                      label="Max Clips per Collection"
                       name="max_clips_per_collection"
                       className="form-item"
                     >
-                      <Input 
-                        type="number" 
-                        placeholder="5" 
-                        addonAfter="个" 
+                      <Input
+                        type="number"
+                        placeholder="5"
+                        addonAfter="clips"
                         className="settings-input"
                       />
                     </Form.Item>
@@ -322,69 +322,69 @@ const SettingsPage: React.FC = () => {
                     className="save-button"
                     loading={loading}
                   >
-                    保存配置
+                    Save Settings
                   </Button>
                 </Form.Item>
               </Form>
             </Card>
 
-            <Card title="使用说明" className="settings-card">
+            <Card title="Usage Guide" className="settings-card">
               <Space direction="vertical" size="large" className="instructions-space">
                 <div className="instruction-item">
                   <Title level={5} className="instruction-title">
-                    <InfoCircleOutlined /> 1. 选择AI模型提供商
+                    <InfoCircleOutlined /> 1. Select AI Model Provider
                   </Title>
                   <Paragraph className="instruction-text">
-                    系统支持多个AI模型提供商：
-                    <br />• <Text strong>阿里通义千问</Text>：访问阿里云控制台获取API密钥
-                    <br />• <Text strong>OpenAI</Text>：访问 platform.openai.com 获取API密钥
-                    <br />• <Text strong>Google Gemini</Text>：访问 ai.google.dev 获取API密钥
-                    <br />• <Text strong>硅基流动</Text>：访问 docs.siliconflow.cn 获取API密钥
+                    The system supports multiple AI model providers:
+                    <br />• <Text strong>Alibaba Tongyi Qianwen</Text>: Get API key from Alibaba Cloud Console
+                    <br />• <Text strong>OpenAI</Text>: Get API key at platform.openai.com
+                    <br />• <Text strong>Google Gemini</Text>: Get API key at ai.google.dev
+                    <br />• <Text strong>SiliconFlow</Text>: Get API key at docs.siliconflow.cn
                   </Paragraph>
                 </div>
-                
+
                 <div className="instruction-item">
                   <Title level={5} className="instruction-title">
-                    <InfoCircleOutlined /> 2. 配置参数说明
+                    <InfoCircleOutlined /> 2. Parameter Description
                   </Title>
                   <Paragraph className="instruction-text">
-                    • <Text strong>文本分块大小</Text>：影响处理速度和精度，建议5000字符<br />
-                    • <Text strong>评分阈值</Text>：只有高于此分数的片段才会被保留<br />
-                    • <Text strong>合集切片数</Text>：控制每个主题合集包含的片段数量
+                    • <Text strong>Text Chunk Size</Text>: Affects processing speed and accuracy, recommended 5000 chars<br />
+                    • <Text strong>Score Threshold</Text>: Only clips scoring above this threshold are retained<br />
+                    • <Text strong>Clips per Collection</Text>: Controls the number of clips in each themed collection
                   </Paragraph>
                 </div>
-                
+
                 <div className="instruction-item">
                   <Title level={5} className="instruction-title">
-                    <InfoCircleOutlined /> 3. 测试连接
+                    <InfoCircleOutlined /> 3. Test Connection
                   </Title>
                   <Paragraph className="instruction-text">
-                    保存前建议先测试API密钥是否有效，确保服务正常运行
+                    It is recommended to test the API key before saving to ensure the service is working properly
                   </Paragraph>
                 </div>
               </Space>
             </Card>
           </TabPane>
 
-          <TabPane tab="B站管理" key="bilibili">
-            <Card title="B站账号管理" className="settings-card">
+          <TabPane tab="Bilibili Management" key="bilibili">
+            <Card title="Bilibili Account Management" className="settings-card">
               <div style={{ textAlign: 'center', padding: '40px 20px' }}>
                 <div style={{ marginBottom: '24px' }}>
                   <UserOutlined style={{ fontSize: '48px', color: '#1890ff', marginBottom: '16px' }} />
                   <Title level={3} style={{ color: '#ffffff', margin: '0 0 8px 0' }}>
-                    B站账号管理
+                    Bilibili Account Management
                   </Title>
                   <Text type="secondary" style={{ color: '#b0b0b0', fontSize: '16px' }}>
-                    管理您的B站账号，支持多账号切换和快速投稿
+                    Manage your Bilibili accounts, supports multi-account switching and quick upload
                   </Text>
                 </div>
-                
+
                 <Space size="large">
                   <Button
                     type="primary"
                     size="large"
                     icon={<UserOutlined />}
-                    onClick={() => message.info('开发中，敬请期待', 3)}
+                    onClick={() => message.info('Under development, coming soon', 3)}
                     style={{
                       borderRadius: '8px',
                       background: 'linear-gradient(45deg, #1890ff, #36cfc9)',
@@ -395,61 +395,61 @@ const SettingsPage: React.FC = () => {
                       fontSize: '16px'
                     }}
                   >
-                    管理B站账号
+                    Manage Bilibili Accounts
                   </Button>
                 </Space>
-                
+
                 <div style={{ marginTop: '32px', textAlign: 'left', maxWidth: '600px', margin: '32px auto 0' }}>
                   <Title level={4} style={{ color: '#ffffff', marginBottom: '16px' }}>
-                    功能特点
+                    Features
                   </Title>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
-                    <div style={{ 
-                      padding: '16px', 
-                      background: 'rgba(255,255,255,0.05)', 
+                    <div style={{
+                      padding: '16px',
+                      background: 'rgba(255,255,255,0.05)',
                       borderRadius: '8px',
                       border: '1px solid #404040'
                     }}>
-                      <Text strong style={{ color: '#1890ff' }}>多账号支持</Text>
+                      <Text strong style={{ color: '#1890ff' }}>Multi-Account Support</Text>
                       <br />
                       <Text type="secondary" style={{ color: '#b0b0b0' }}>
-                        支持添加多个B站账号，方便管理和切换
+                        Supports adding multiple Bilibili accounts for easy management and switching
                       </Text>
                     </div>
-                    <div style={{ 
-                      padding: '16px', 
-                      background: 'rgba(255,255,255,0.05)', 
+                    <div style={{
+                      padding: '16px',
+                      background: 'rgba(255,255,255,0.05)',
                       borderRadius: '8px',
                       border: '1px solid #404040'
                     }}>
-                      <Text strong style={{ color: '#52c41a' }}>安全登录</Text>
+                      <Text strong style={{ color: '#52c41a' }}>Secure Login</Text>
                       <br />
                       <Text type="secondary" style={{ color: '#b0b0b0' }}>
-                        使用Cookie导入，避免风控，安全可靠
+                        Uses Cookie import to avoid risk control, safe and reliable
                       </Text>
                     </div>
-                    <div style={{ 
-                      padding: '16px', 
-                      background: 'rgba(255,255,255,0.05)', 
+                    <div style={{
+                      padding: '16px',
+                      background: 'rgba(255,255,255,0.05)',
                       borderRadius: '8px',
                       border: '1px solid #404040'
                     }}>
-                      <Text strong style={{ color: '#faad14' }}>快速投稿</Text>
+                      <Text strong style={{ color: '#faad14' }}>Quick Upload</Text>
                       <br />
                       <Text type="secondary" style={{ color: '#b0b0b0' }}>
-                        在切片详情页直接选择账号投稿，操作简单
+                        Directly select an account to upload from the clip detail page, simple to use
                       </Text>
                     </div>
-                    <div style={{ 
-                      padding: '16px', 
-                      background: 'rgba(255,255,255,0.05)', 
+                    <div style={{
+                      padding: '16px',
+                      background: 'rgba(255,255,255,0.05)',
                       borderRadius: '8px',
                       border: '1px solid #404040'
                     }}>
-                      <Text strong style={{ color: '#722ed1' }}>批量管理</Text>
+                      <Text strong style={{ color: '#722ed1' }}>Batch Management</Text>
                       <br />
                       <Text type="secondary" style={{ color: '#b0b0b0' }}>
-                        支持批量上传多个切片，提高效率
+                        Supports batch uploading multiple clips to improve efficiency
                       </Text>
                     </div>
                   </div>
@@ -464,7 +464,7 @@ const SettingsPage: React.FC = () => {
           visible={showBilibiliManager}
           onClose={() => setShowBilibiliManager(false)}
           onUploadSuccess={() => {
-            message.success('操作成功')
+            message.success('Operation successful')
           }}
         />
       </div>

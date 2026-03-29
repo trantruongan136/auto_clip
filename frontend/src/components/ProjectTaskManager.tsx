@@ -106,7 +106,7 @@ export const ProjectTaskManager: React.FC<ProjectTaskManagerProps> = ({
       render: (status: string) => (
         <Tag color={getStatusColor(status)}>
           {status === 'completed' ? 'Completed' :
-           status === 'running' ? 'Executing' :
+           status === 'running' ? 'Processing' :
            status === 'failed' ? 'Failed' :
            status === 'pending' ? 'Pending' : status}
         </Tag>
@@ -136,7 +136,7 @@ export const ProjectTaskManager: React.FC<ProjectTaskManagerProps> = ({
       key: 'created_at',
       render: (timestamp: string) => (
         <Text type="secondary">
-          {new Date(timestamp).toLocaleString('zh-CN')}
+          {new Date(timestamp).toLocaleString('en-US')}
         </Text>
       )
     },
@@ -256,7 +256,7 @@ export const ProjectTaskManager: React.FC<ProjectTaskManagerProps> = ({
           pageSize: 5,
           showSizeChanger: false,
           showTotal: (total, range) => 
-            `No. ${range[0]}-${range[1]} Articles, total ${total} strip`
+            `Showing ${range[0]}-${range[1]} of ${total} items`
         }}
         size="small"
         loading={loading}

@@ -53,7 +53,7 @@ const BilibiliAccountManager: React.FC = () => {
       // 同时获取账号健康状态
       await fetchAccountsHealth(data)
     } catch (error: any) {
-      message.error('获取账号列表失败: ' + (error.message || '未知错误'))
+      message.error('Failed to get account list: ' + (error.message || 'Unknown error'))
     } finally {
       setLoading(false)
     }
@@ -88,7 +88,7 @@ const BilibiliAccountManager: React.FC = () => {
       
       setAccountsHealth(healthData)
     } catch (error: any) {
-      console.error('获取账号健康状态失败:', error)
+      console.error('Failed to get account health status:', error)
     }
   }
 
@@ -97,9 +97,9 @@ const BilibiliAccountManager: React.FC = () => {
     try {
       setRefreshing(true)
       await fetchAccountsHealth()
-      message.success('健康状态已刷新')
+      message.success('Health status refreshed')
     } catch (error: any) {
-      message.error('刷新失败: ' + (error.message || '未知错误'))
+      message.error('Refresh failed: ' + (error.message || 'Unknown error'))
     } finally {
       setRefreshing(false)
     }
@@ -111,7 +111,7 @@ const BilibiliAccountManager: React.FC = () => {
       const response = await uploadApi.getLoginMethods()
       setLoginMethods(response.methods)
     } catch (error: any) {
-      console.error('获取登录方式失败:', error)
+      console.error('Failed to get login methods:', error)
     }
   }
 
@@ -132,12 +132,12 @@ const BilibiliAccountManager: React.FC = () => {
     try {
       setLoading(true)
       const account = await uploadApi.passwordLogin(values.username, values.password, values.nickname)
-      message.success('账号密码登录成功！')
+      message.success('Account login successful!')
       setModalVisible(false)
       passwordForm.resetFields()
       fetchAccounts()
     } catch (error: any) {
-      message.error('账号密码登录失败: ' + (error.message || '未知错误'))
+      message.error('Account login failed: ' + (error.message || 'Unknown error'))
     } finally {
       setLoading(false)
     }
@@ -160,17 +160,17 @@ const BilibiliAccountManager: React.FC = () => {
       })
       
       if (Object.keys(cookies).length === 0) {
-        message.error('Cookie格式不正确，请检查输入')
+        message.error('Invalid Cookie format, please check your input')
         return
       }
       
       const account = await uploadApi.cookieLogin(cookies, values.nickname)
-      message.success('Cookie导入成功！')
+      message.success('Cookie imported successfully!')
       setModalVisible(false)
       cookieForm.resetFields()
       fetchAccounts()
     } catch (error: any) {
-      message.error('Cookie导入失败: ' + (error.message || '未知错误'))
+      message.error('Cookie import failed: ' + (error.message || 'Unknown error'))
     } finally {
       setLoading(false)
     }
@@ -199,7 +199,7 @@ const BilibiliAccountManager: React.FC = () => {
         try {
           pollCount++
           if (pollCount > maxPolls) {
-            message.error('二维码登录超时，请重试')
+            message.error('QR code login timed out, please try again')
             setQrSessionId('')
             setQrLoginStatus('')
             setQrCodeUrl('')
@@ -215,23 +215,23 @@ const BilibiliAccountManager: React.FC = () => {
           }
           
           if (statusResponse.status === 'success') {
-            message.success('二维码登录成功！')
+            message.success('QR code login successful!')
             clearInterval(interval)
             setModalVisible(false)
             fetchAccounts()
           } else if (statusResponse.status === 'failed') {
-            message.error('二维码登录失败，请重试')
+            message.error('QR code login failed, please try again')
             clearInterval(interval)
           }
         } catch (error: any) {
-          console.error('检查登录状态失败:', error)
+          console.error('Failed to check login status:', error)
         }
       }, 1000)
       
       setStatusCheckInterval(interval)
       
     } catch (error: any) {
-      message.error('启动二维码登录失败: ' + (error.message || '未知错误'))
+      message.error('Failed to start QR code login: ' + (error.message || 'Unknown error'))
     } finally {
       setLoading(false)
     }
@@ -241,10 +241,10 @@ const BilibiliAccountManager: React.FC = () => {
   const handleDeleteAccount = async (accountId: string) => {
     try {
       await uploadApi.deleteAccount(accountId)
-      message.success('账号删除成功')
+      message.success('Account deleted successfully')
       fetchAccounts()
     } catch (error: any) {
-      message.error('删除账号失败: ' + (error.message || '未知错误'))
+      message.error('Failed to delete account: ' + (error.message || 'Unknown error'))
     }
   }
 
@@ -252,35 +252,35 @@ const BilibiliAccountManager: React.FC = () => {
   const getRiskLevelTag = (riskLevel: string) => {
     switch (riskLevel) {
       case 'low':
-        return <Tag color="green">低风险</Tag>
+        return <Tag color="green">Low Risk</Tag>
       case 'medium':
-        return <Tag color="orange">中风险</Tag>
+        return <Tag color="orange">Medium Risk</Tag>
       case 'high':
-        return <Tag color="red">高风险</Tag>
+        return <Tag color="red">High Risk</Tag>
       default:
-        return <Tag>未知</Tag>
+        return <Tag>Unknown</Tag>
     }
   }
 
   // 获取推荐标签
   const getRecommendedTag = (recommended: boolean) => {
-    return recommended ? <Tag color="blue">推荐</Tag> : null
+    return recommended ? <Tag color="blue">Recommended</Tag> : null
   }
 
   // 获取健康状态标签和颜色
   const getHealthStatusTag = (health?: AccountHealth) => {
-    if (!health) return <Tag>未知</Tag>
+    if (!health) return <Tag>Unknown</Tag>
     
     const statusConfig = {
-      excellent: { color: 'green', text: '优秀', icon: <TrophyOutlined /> },
-      good: { color: 'blue', text: '良好', icon: <CheckCircleOutlined /> },
-      warning: { color: 'orange', text: '警告', icon: <ExclamationCircleOutlined /> },
-      poor: { color: 'red', text: '较差', icon: <CloseCircleOutlined /> }
+      excellent: { color: 'green', text: 'Excellent', icon: <TrophyOutlined /> },
+      good: { color: 'blue', text: 'Good', icon: <CheckCircleOutlined /> },
+      warning: { color: 'orange', text: 'Warning', icon: <ExclamationCircleOutlined /> },
+      poor: { color: 'red', text: 'Poor', icon: <CloseCircleOutlined /> }
     }
     
     const config = statusConfig[health.status]
     return (
-      <Tooltip title={`健康分数: ${health.score}/100`}>
+      <Tooltip title={`Health score: ${health.score}/100`}>
         <Tag color={config.color} icon={config.icon}>
           {config.text} ({health.score})
         </Tag>
@@ -295,15 +295,15 @@ const BilibiliAccountManager: React.FC = () => {
     const diffMs = now.getTime() - date.getTime()
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
     
-    if (diffDays === 0) return '今天'
-    if (diffDays === 1) return '昨天'
-    if (diffDays < 7) return `${diffDays}天前`
+    if (diffDays === 0) return 'Today'
+    if (diffDays === 1) return 'Yesterday'
+    if (diffDays < 7) return `${diffDays} days ago`
     return date.toLocaleDateString()
   }
 
   const columns = [
     {
-      title: '用户名',
+      title: 'Username',
       dataIndex: 'username',
       key: 'username',
       render: (username: string, record: BilibiliAccount) => (
@@ -314,27 +314,27 @@ const BilibiliAccountManager: React.FC = () => {
       ),
     },
     {
-      title: '昵称',
+      title: 'Nickname',
       dataIndex: 'nickname',
       key: 'nickname',
     },
     {
-      title: '账号状态',
+      title: 'Account Status',
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => (
         <Tag color={status === 'active' ? 'green' : 'red'} icon={status === 'active' ? <CheckCircleOutlined /> : <CloseCircleOutlined />}>
-          {status === 'active' ? '正常' : '异常'}
+          {status === 'active' ? 'Active' : 'Inactive'}
         </Tag>
       ),
     },
     {
-      title: '健康状态',
+      title: 'Health Status',
       key: 'health',
       render: (_: any, record: BilibiliAccount) => getHealthStatusTag(accountsHealth[record.id]),
     },
     {
-      title: '活跃度',
+      title: 'Activity',
       key: 'activity',
       render: (_: any, record: BilibiliAccount) => {
         const health = accountsHealth[record.id]
@@ -344,38 +344,38 @@ const BilibiliAccountManager: React.FC = () => {
           <Space direction="vertical" size="small" style={{ width: '100%' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <EyeOutlined style={{ color: '#1890ff' }} />
-              <span style={{ fontSize: '12px' }}>上传: {health.uploadCount}</span>
+              <span style={{ fontSize: '12px' }}>Uploads: {health.uploadCount}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <HeartOutlined style={{ color: '#52c41a' }} />
-              <span style={{ fontSize: '12px' }}>成功率: {health.successRate}%</span>
+              <span style={{ fontSize: '12px' }}>Success rate: {health.successRate}%</span>
             </div>
             <div style={{ fontSize: '11px', color: '#999' }}>
-              最后活跃: {formatLastActive(health.lastActive)}
+              Last active: {formatLastActive(health.lastActive)}
             </div>
           </Space>
         )
       },
     },
     {
-      title: '操作',
+      title: 'Actions',
       key: 'action',
       render: (_: any, record: BilibiliAccount) => (
         <Space size="middle">
-          <Tooltip title="查看详情">
+          <Tooltip title="View Details">
             <Button type="text" icon={<EyeOutlined />} size="small">
-              详情
+              Details
             </Button>
           </Tooltip>
           <Popconfirm
-            title="确定要删除这个账号吗？"
-            description="删除后将无法恢复，请谨慎操作。"
+            title="Are you sure you want to delete this account?"
+            description="This cannot be undone, please proceed carefully."
             onConfirm={() => handleDeleteAccount(record.id)}
-            okText="确定"
-            cancelText="取消"
+            okText="Confirm"
+            cancelText="Cancel"
           >
             <Button type="text" danger icon={<DeleteOutlined />} size="small">
-              删除
+              Delete
             </Button>
           </Popconfirm>
         </Space>
@@ -406,7 +406,7 @@ const BilibiliAccountManager: React.FC = () => {
             label: (
               <span>
                 <UserOutlined />
-                账号管理
+                Account Management
               </span>
             ),
             children: (
@@ -415,7 +415,7 @@ const BilibiliAccountManager: React.FC = () => {
                 <div style={{ marginBottom: '16px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
                   <Card size="small">
                     <Statistic
-                      title="总账号数"
+                      title="Total Accounts"
                       value={stats.totalAccounts}
                       prefix={<UserOutlined />}
                       valueStyle={{ color: '#1890ff' }}
@@ -423,7 +423,7 @@ const BilibiliAccountManager: React.FC = () => {
                   </Card>
                   <Card size="small">
                     <Statistic
-                      title="活跃账号"
+                      title="Active Accounts"
                       value={stats.activeAccounts}
                       suffix={`/ ${stats.totalAccounts}`}
                       prefix={<CheckCircleOutlined />}
@@ -432,16 +432,16 @@ const BilibiliAccountManager: React.FC = () => {
                   </Card>
                   <Card size="small">
                     <Statistic
-                      title="平均健康分"
+                      title="Avg Health Score"
                       value={stats.avgHealth}
-                      suffix="分"
+                      suffix="pts"
                       prefix={<HeartOutlined />}
                       valueStyle={{ color: stats.avgHealth >= 80 ? '#52c41a' : stats.avgHealth >= 60 ? '#faad14' : '#ff4d4f' }}
                     />
                   </Card>
                   <Card size="small">
                     <Statistic
-                      title="优秀账号"
+                      title="Excellent Accounts"
                       value={stats.excellentCount}
                       prefix={<TrophyOutlined />}
                       valueStyle={{ color: '#722ed1' }}
@@ -450,21 +450,21 @@ const BilibiliAccountManager: React.FC = () => {
                 </div>
 
                 <Card 
-                  title="B站账号管理" 
+                  title="Bilibili Account Management" 
                   extra={
                     <Space>
-                      <Tooltip title="刷新健康状态">
+                      <Tooltip title="Refresh health status">
                         <Button 
                           icon={<ReloadOutlined />} 
                           onClick={refreshAccountsHealth}
                           loading={refreshing}
                           size="small"
                         >
-                          刷新
+                          Refresh
                         </Button>
                       </Tooltip>
                       <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalVisible(true)}>
-                        添加账号
+                        Add Account
                       </Button>
                     </Space>
                   }
@@ -478,7 +478,7 @@ const BilibiliAccountManager: React.FC = () => {
                       pageSize: 10,
                       showSizeChanger: true,
                       showQuickJumper: true,
-                      showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，共 ${total} 条`
+                      showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`
                     }}
                     scroll={{ x: 800 }}
                   />
@@ -491,7 +491,7 @@ const BilibiliAccountManager: React.FC = () => {
             label: (
               <span>
                 <HeartOutlined />
-                健康监控
+                Health Monitor
               </span>
             ),
             children: <AccountHealthMonitor onRefresh={fetchAccounts} />,
@@ -500,7 +500,7 @@ const BilibiliAccountManager: React.FC = () => {
       />
 
       <Modal
-        title="添加B站账号"
+        title="Add Bilibili Account"
         open={modalVisible}
         onCancel={() => {
           setModalVisible(false)
@@ -516,25 +516,25 @@ const BilibiliAccountManager: React.FC = () => {
         width={600}
       >
         <Alert
-          message="登录方式说明"
-          description="为了避免B站风控，建议使用Cookie导入方式。扫码登录可能触发风控机制。"
+          message="Login Method Instructions"
+          description="To avoid Bilibili risk controls, it is recommended to use Cookie import. QR code login may trigger risk controls."
           type="info"
           showIcon
           style={{ marginBottom: 16 }}
         />
 
         <Tabs activeKey={activeTab} onChange={setActiveTab}>
-          <TabPane tab="Cookie导入" key="cookie">
+          <TabPane tab="Cookie Import" key="cookie">
             <Form form={cookieForm} onFinish={handleCookieLogin} layout="vertical">
               <Form.Item
                 name="nickname"
-                label="昵称"
-                rules={[{ required: true, message: '请输入昵称' }]}
+                label="Nickname"
+                rules={[{ required: true, message: 'Please enter a nickname' }]}
               >
-                <Input placeholder="请输入账号昵称" />
+                <Input placeholder="Enter account nickname" />
               </Form.Item>
               
-                             <Form.Item
+              <Form.Item
                  name="cookies"
                  label={
                    <Space>
@@ -545,80 +545,80 @@ const BilibiliAccountManager: React.FC = () => {
                        icon={<QuestionCircleOutlined />}
                        onClick={() => setCookieHelperVisible(true)}
                      >
-                       获取帮助
+                       Get Help
                      </Button>
                    </Space>
                  }
-                 rules={[{ required: true, message: '请输入Cookie' }]}
+                 rules={[{ required: true, message: 'Please enter Cookie' }]}
                >
                  <TextArea
                    rows={6}
-                   placeholder="请从浏览器开发者工具中复制Cookie，格式如：SESSDATA=xxx; bili_jct=xxx; DedeUserID=xxx"
+                   placeholder="Copy Cookie from browser DevTools, format: SESSDATA=xxx; bili_jct=xxx; DedeUserID=xxx"
                  />
                </Form.Item>
               
               <Form.Item>
                 <Button type="primary" htmlType="submit" loading={loading} block>
-                  导入Cookie
+                  Import Cookie
                 </Button>
               </Form.Item>
             </Form>
             
-                         <Divider />
+            <Divider />
              <Paragraph type="secondary" style={{ fontSize: '12px' }}>
-               <Text strong>快速获取Cookie：</Text>
+               <Text strong>Quick Cookie Guide: </Text>
                <br />
-               点击上方的"获取帮助"按钮，查看详细的Cookie获取步骤指南
+               Click the "Get Help" button above to view the detailed Cookie guide
              </Paragraph>
           </TabPane>
 
-          <TabPane tab="账号密码" key="password">
+          <TabPane tab="Account & Password" key="password">
             <Form form={passwordForm} onFinish={handlePasswordLogin} layout="vertical">
               <Form.Item
                 name="username"
-                label="用户名"
-                rules={[{ required: true, message: '请输入用户名' }]}
+                label="Username"
+                rules={[{ required: true, message: 'Please enter a username' }]}
               >
-                <Input placeholder="请输入B站用户名或手机号" />
+                <Input placeholder="Enter Bilibili username or phone number" />
               </Form.Item>
               
               <Form.Item
                 name="password"
-                label="密码"
-                rules={[{ required: true, message: '请输入密码' }]}
+                label="Password"
+                rules={[{ required: true, message: 'Please enter password' }]}
               >
-                <Input.Password placeholder="请输入密码" />
+                <Input.Password placeholder="Enter password" />
               </Form.Item>
               
               <Form.Item
                 name="nickname"
-                label="昵称"
-                rules={[{ required: true, message: '请输入昵称' }]}
+                label="Nickname"
+                rules={[{ required: true, message: 'Please enter a nickname' }]}
               >
-                <Input placeholder="请输入账号昵称" />
+                <Input placeholder="Enter account nickname" />
               </Form.Item>
               
               <Form.Item>
                 <Button type="primary" htmlType="submit" loading={loading} block>
-                  登录
+                  Sign In
                 </Button>
               </Form.Item>
             </Form>
             
             <Alert
-              message="注意"
-              description="账号密码登录可能需要处理验证码，如果遇到问题建议使用Cookie导入方式。"
+              message="Notice"
+              description="Account/password login may require a CAPTCHA. If you encounter issues, it is recommended to use Cookie import."
               type="warning"
               showIcon
             />
           </TabPane>
 
-          <TabPane tab="扫码登录" key="qr">
+          <TabPane tab="Scan QR Code" key="qr">
             <div style={{ textAlign: 'center' }}>
               {!qrSessionId ? (
                 <div>
-                  <Form.Item label="昵称">
-                    <Input placeholder="请输入账号昵称（可选）" />
+                  <Form.Item label="Nickname">
+                    <Input placeholder="Enter account nickname (optional)" />
                   </Form.Item>
                   <Button 
                     type="primary" 
@@ -627,39 +627,39 @@ const BilibiliAccountManager: React.FC = () => {
                     loading={loading}
                     block
                   >
-                    开始扫码登录
+                    Start QR Code Login
                   </Button>
                 </div>
               ) : (
                 <div>
                   {qrCodeUrl && (
                     <div style={{ marginBottom: '16px' }}>
-                      <img src={qrCodeUrl} alt="二维码" style={{ maxWidth: '200px' }} />
+                      <img src={qrCodeUrl} alt="QR Code" style={{ maxWidth: '200px' }} />
                     </div>
                   )}
                   
                   {qrLoginStatus === 'pending' && (
-                    <p>正在生成二维码...</p>
+                    <p>Generating QR code...</p>
                   )}
                   
                   {qrLoginStatus === 'processing' && (
-                    <p>请使用B站APP扫描二维码</p>
+                    <p>Please scan the QR code with the Bilibili app</p>
                   )}
                   
                   {qrLoginStatus === 'success' && (
-                    <p style={{ color: '#52c41a' }}>✅ 登录成功！</p>
+                    <p style={{ color: '#52c41a' }}>✅ Login successful!</p>
                   )}
                   
                   {qrLoginStatus === 'failed' && (
-                    <p style={{ color: '#ff4d4f' }}>❌ 登录失败，请重试</p>
+                    <p style={{ color: '#ff4d4f' }}>❌ Login failed, please try again</p>
                   )}
                 </div>
               )}
             </div>
             
             <Alert
-              message="风险提示"
-              description="扫码登录可能触发B站风控机制，建议优先使用Cookie导入方式。"
+              message="Risk Warning"
+              description="QR code login may trigger Bilibili risk controls. It is recommended to use Cookie import instead."
               type="error"
               showIcon
             />
